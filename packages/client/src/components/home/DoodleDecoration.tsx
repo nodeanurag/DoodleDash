@@ -40,3 +40,15 @@ export const ArrowDoodle = ({ className, style }: DoodleProps) => (
     <path d="M 5,35 Q 12,20 28,10 M 20,8 L 30,10 L 28,20" />
   </svg>
 );
+
+export const UnderlinePinkDoodle = ({ className, style }: DoodleProps) => (
+  <svg className={className} style={style} viewBox="0 0 120 15" preserveAspectRatio="none" fill="none" stroke="#FF5C93" strokeWidth="3.5" strokeLinecap="round">
+    <path d="M 5,8 Q 60,3 115,10 M 15,11 Q 65,7 105,12" />
+  </svg>
+);
+
+export const UnderlineYellowDoodle = ({ className, style }: DoodleProps) => (
+  <svg className={className} style={style} viewBox="0 0 100 12" preserveAspectRatio="none" fill="none" stroke="#F8C843" strokeWidth="3.5" strokeLinecap="round">
+    <path d="M 4,6 Q 50,3 96,8 M 10,9 Q 55,7 86,10" />
+  </svg>
+);
