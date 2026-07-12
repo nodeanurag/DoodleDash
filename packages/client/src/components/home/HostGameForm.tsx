@@ -11,7 +11,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-
 const AVATAR_STYLES = [
   { id: 'croodles', name: 'Doodles' },
   { id: 'bottts', name: 'Robots' },
@@ -326,6 +325,17 @@ export function HostGameForm({
           </div>
         )}
       </div>
+
+      {/* Create CTA Button */}
+      <Button 
+        size="lg" 
+        className="w-full h-[50px] rounded-[11px] btn-game-primary font-extrabold text-sm shadow-xs mt-1 cursor-pointer flex items-center justify-center gap-2" 
+        disabled={loadingCreate || !connected} 
+        onClick={onCreate}
+        aria-busy={loadingCreate}
+      >
+        {loadingCreate ? 'Creating room…' : 'Create Room →'}
+      </Button>
     </div>
   );
 }
