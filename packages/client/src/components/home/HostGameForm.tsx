@@ -50,3 +50,32 @@ interface HostGameFormProps {
   loadingCreate: boolean;
   connected: boolean;
 }
+
+export function HostGameForm({
+  name,
+  setName,
+  rounds,
+  setRounds,
+  drawTime,
+  setDrawTime,
+  difficulty,
+  setDifficulty,
+  language,
+  setLanguage,
+  avatarStyle,
+  setAvatarStyle,
+  avatarSeed,
+  setAvatarSeed,
+  avatarColor,
+  setAvatarColor,
+  onCreate,
+  createError,
+  setCreateError,
+  loadingCreate,
+  connected,
+}: HostGameFormProps) {
+  return (
+    <div className="flex flex-col gap-5 w-full">
+    </div>
+  );
+}
