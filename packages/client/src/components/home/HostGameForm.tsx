@@ -171,6 +171,24 @@ export function HostGameForm({
           </button>
         </div>
       </div>
+
+      {/* "Customize your doodle" Accordion */}
+      <div className="w-full border border-[#DDD8D0] rounded-[11px] bg-white overflow-hidden transition-all duration-200">
+        <button
+          type="button"
+          onClick={() => setShowDoodleCustomizer(!showDoodleCustomizer)}
+          className="w-full px-3.5 py-3 text-xs font-bold text-[#222222] bg-[#FFFCF7] hover:bg-[#F9F5EE] flex items-center justify-between border-none cursor-pointer"
+          aria-expanded={showDoodleCustomizer}
+        >
+          <span>Customize your doodle</span>
+          <ChevronDown className={cn("size-4 text-[#68666D] transition-transform duration-200", showDoodleCustomizer && "rotate-180")} />
+        </button>
+
+        {showDoodleCustomizer && (
+          <div className="p-3.5 flex gap-3.5 items-center border-t border-[#DDD8D0] animate-rise">
+          </div>
+        )}
+      </div>
     </div>
   );
 }
