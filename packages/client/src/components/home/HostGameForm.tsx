@@ -259,6 +259,70 @@ export function HostGameForm({
 
         {showSettings && (
           <div className="p-3.5 grid grid-cols-2 gap-3 border-t border-[#DDD8D0] animate-rise">
+            <div className="flex flex-col gap-1">
+              <Label className="text-xs font-bold text-[#222222] flex items-center gap-1">
+                <RotateCw className="size-3 text-[#6554D9]" /> Rounds
+              </Label>
+              <Select value={String(rounds)} onValueChange={(v) => setRounds(Number(v))}>
+                <SelectTrigger className="h-9 rounded-[8px] bg-white border border-[#D8D3CB] text-xs">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {[2, 3, 4, 5, 6].map((r) => (
+                    <SelectItem key={r} value={String(r)}>{r} Rounds</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div className="flex flex-col gap-1">
+              <Label className="text-xs font-bold text-[#222222] flex items-center gap-1">
+                <Clock className="size-3 text-[#6554D9]" /> Draw Time
+              </Label>
+              <Select value={String(drawTime)} onValueChange={(v) => setDrawTime(Number(v))}>
+                <SelectTrigger className="h-9 rounded-[8px] bg-white border border-[#D8D3CB] text-xs">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {[40, 60, 80, 100, 120].map((t) => (
+                    <SelectItem key={t} value={String(t)}>{t}s</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <Label className="text-xs font-bold text-[#222222] flex items-center gap-1">
+                <Target className="size-3.5 text-[#6554D9]" /> Difficulty
+              </Label>
+              <Select value={difficulty} onValueChange={setDifficulty}>
+                <SelectTrigger className="h-9 rounded-[8px] bg-white border border-[#D8D3CB] text-xs">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="easy">Easy Words</SelectItem>
+                  <SelectItem value="medium">Medium Words</SelectItem>
+                  <SelectItem value="hard">Hard Words</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <Label className="text-xs font-bold text-[#222222] flex items-center gap-1">
+                <Globe className="size-3 text-[#6554D9]" /> Language
+              </Label>
+              <Select value={language} onValueChange={setLanguage}>
+                <SelectTrigger className="h-9 rounded-[8px] bg-white border border-[#D8D3CB] text-xs">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="en">English</SelectItem>
+                  <SelectItem value="es">Spanish</SelectItem>
+                  <SelectItem value="fr">French</SelectItem>
+                  <SelectItem value="de">German</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         )}
       </div>
