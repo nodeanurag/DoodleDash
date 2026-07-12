@@ -95,6 +95,34 @@ export function HostGameForm({
           <p className="text-xs text-[#68666D] font-medium">Create a room and invite your friends</p>
         </div>
       </div>
+
+      {/* Nickname Field */}
+      <div className="flex flex-col gap-1.5">
+        <Label htmlFor="create-name" className="text-xs font-bold text-[#222222]">Your nickname</Label>
+        <Input
+          id="create-name"
+          value={name}
+          maxLength={20}
+          placeholder="e.g. Picasso"
+          className={cn(
+            "h-11 rounded-[11px] border-[#D8D3CB] bg-white transition-all font-semibold",
+            createError && "border-[#E05260] focus:border-[#E05260] focus:ring-[#E05260]/10"
+          )}
+          onChange={(e) => {
+            setName(e.target.value);
+            if (e.target.value.trim()) setCreateError('');
+          }}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              onCreate();
+            }
+          }}
+        />
+        {createError && (
+          <span className="text-[11px] font-bold text-[#E05260]">{createError}</span>
+        )}
+      </div>
     </div>
   );
 }
