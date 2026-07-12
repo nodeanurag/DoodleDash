@@ -26,3 +26,27 @@ const PRESET_AVATARS = [
   { style: 'fun-emoji', seed: 'laugh', color: '#eab308' },
   { style: 'croodles', seed: 'picasso', color: '#8b5cf6' },
 ];
+
+interface HostGameFormProps {
+  name: string;
+  setName: (val: string) => void;
+  rounds: number;
+  setRounds: (val: number) => void;
+  drawTime: number;
+  setDrawTime: (val: number) => void;
+  difficulty: string;
+  setDifficulty: (val: string) => void;
+  language: string;
+  setLanguage: (val: string) => void;
+  avatarStyle: string;
+  setAvatarStyle: (val: string) => void;
+  avatarSeed: string;
+  setAvatarSeed: (val: string) => void;
+  avatarColor: string;
+  setAvatarColor: (val: string) => void;
+  onCreate: () => void;
+  createError: string;
+  setCreateError: (val: string) => void;
+  loadingCreate: boolean;
+  connected: boolean;
+}
