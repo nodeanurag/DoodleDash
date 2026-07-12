@@ -52,3 +52,9 @@ export const UnderlineYellowDoodle = ({ className, style }: DoodleProps) => (
     <path d="M 4,6 Q 50,3 96,8 M 10,9 Q 55,7 86,10" />
   </svg>
 );
+
+export const BrushPurpleDoodle = ({ className, style }: DoodleProps) => (
+  <svg className={className} style={style} viewBox="0 0 200 200" fill="currentColor">
+    <path d="M50 40 C100 20, 150 20, 180 50 C210 80, 190 140, 150 170 C100 200, 40 180, 20 140 C0 100, 10 60, 50 40 Z" />
+  </svg>
+);
