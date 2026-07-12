@@ -209,6 +209,38 @@ export function HostGameForm({
                 <Dices className="size-3" />
               </button>
             </div>
+
+            <div className="flex-1 flex flex-col gap-2 min-w-0">
+              <Select value={avatarStyle} onValueChange={setAvatarStyle}>
+                <SelectTrigger className="h-8 w-full text-xs rounded-[8px] bg-white border border-[#D8D3CB]">
+                  <SelectValue placeholder="Style" />
+                </SelectTrigger>
+                <SelectContent>
+                  {AVATAR_STYLES.map((s) => (
+                    <SelectItem key={s.id} value={s.id} className="text-xs">
+                      {s.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              {/* Color circle */}
+              <div className="flex items-center gap-1.5">
+                <label
+                  style={{ background: avatarColor }}
+                  className="size-5 rounded-full border border-[#D8D3CB] flex items-center justify-center cursor-pointer transition-transform hover:scale-110 shadow-3xs"
+                  title="Choose custom background color"
+                >
+                  <input
+                    type="color"
+                    className="size-0 opacity-0 cursor-pointer"
+                    value={avatarColor}
+                    onChange={(e) => setAvatarColor(e.target.value)}
+                  />
+                </label>
+                <span className="text-[10px] font-bold text-[#68666D]">Custom Color</span>
+              </div>
+            </div>
           </div>
         )}
       </div>
