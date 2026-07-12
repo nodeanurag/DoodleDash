@@ -77,6 +77,12 @@ export function HostGameForm({
   const [showDoodleCustomizer, setShowDoodleCustomizer] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
 
+  const avatarUrl = `https://api.dicebear.com/10.x/${avatarStyle}/svg?seed=${encodeURIComponent(avatarSeed)}&backgroundColor=${avatarColor.replace('#', '')}`;
+
+  const isPresetSelected = PRESET_AVATARS.some(
+    p => p.style === avatarStyle && p.seed === avatarSeed && p.color === avatarColor
+  );
+
   return (
     <div className="flex flex-col gap-5 w-full">
     </div>
