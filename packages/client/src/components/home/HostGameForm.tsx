@@ -74,6 +74,9 @@ export function HostGameForm({
   loadingCreate,
   connected,
 }: HostGameFormProps) {
+  const [showDoodleCustomizer, setShowDoodleCustomizer] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
+
   return (
     <div className="flex flex-col gap-5 w-full">
     </div>
