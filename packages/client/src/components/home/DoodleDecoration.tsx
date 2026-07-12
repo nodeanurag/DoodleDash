@@ -28,3 +28,15 @@ export const CrownDoodle = ({ className, style }: DoodleProps) => (
     <path d="M 2,18 L 4,8 L 9,12 L 12,5 L 15,12 L 20,8 L 22,18 Z" />
   </svg>
 );
+
+export const CrossDoodle = ({ className, style }: DoodleProps) => (
+  <svg className={className} style={style} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M 5,5 L 19,19 M 19,5 L 5,19" />
+  </svg>
+);
+
+export const ArrowDoodle = ({ className, style }: DoodleProps) => (
+  <svg className={className} style={style} viewBox="0 0 40 40" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M 5,35 Q 12,20 28,10 M 20,8 L 30,10 L 28,20" />
+  </svg>
+);
