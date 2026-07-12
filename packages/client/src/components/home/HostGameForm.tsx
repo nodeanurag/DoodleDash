@@ -85,6 +85,16 @@ export function HostGameForm({
 
   return (
     <div className="flex flex-col gap-5 w-full">
+      {/* Header */}
+      <div className="flex items-center gap-3">
+        <div className="p-2 bg-[#EEEAFE] text-[#6554D9] rounded-xl border border-[#DDD8D0]">
+          <Pencil className="size-[22px]" />
+        </div>
+        <div>
+          <h2 className="text-xl font-extrabold text-[#222222]">Host a Game</h2>
+          <p className="text-xs text-[#68666D] font-medium">Create a room and invite your friends</p>
+        </div>
+      </div>
     </div>
   );
 }
