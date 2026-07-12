@@ -186,6 +186,29 @@ export function HostGameForm({
 
         {showDoodleCustomizer && (
           <div className="p-3.5 flex gap-3.5 items-center border-t border-[#DDD8D0] animate-rise">
+            <div className="relative shrink-0 select-none">
+              <div 
+                className="w-12 h-12 rounded-full overflow-hidden border border-[#DDD8D0] flex items-center justify-center"
+                style={{ background: avatarColor }}
+              >
+                <img 
+                  src={avatarUrl} 
+                  alt="Avatar Preview" 
+                  className="size-full object-cover select-none"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = `https://api.dicebear.com/10.x/bottts/svg?seed=Picasso`;
+                  }}
+                />
+              </div>
+              <button
+                type="button"
+                title="Randomize avatar"
+                className="absolute -bottom-1 -right-1 bg-[#6554D9] text-white hover:bg-[#5746C7] size-5 rounded-full shadow-xs flex items-center justify-center border border-white cursor-pointer transition-transform active:scale-95"
+                onClick={() => setAvatarSeed(Math.random().toString(36).substring(7))}
+              >
+                <Dices className="size-3" />
+              </button>
+            </div>
           </div>
         )}
       </div>
