@@ -123,6 +123,54 @@ export function HostGameForm({
           <span className="text-[11px] font-bold text-[#E05260]">{createError}</span>
         )}
       </div>
+
+      {/* Preset Avatar Selection */}
+      <div className="flex flex-col gap-2">
+        <Label className="text-xs font-bold text-[#222222]">Pick your doodle</Label>
+        <div className="flex flex-wrap items-center gap-2">
+          {PRESET_AVATARS.map((p, index) => {
+            const isSelected = avatarStyle === p.style && avatarSeed === p.seed && avatarColor === p.color;
+            const presetUrl = `https://api.dicebear.com/10.x/${p.style}/svg?seed=${encodeURIComponent(p.seed)}&backgroundColor=${p.color.replace('#', '')}`;
+            return (
+              <button
+                key={index}
+                type="button"
+                onClick={() => {
+                  setAvatarStyle(p.style);
+                  setAvatarSeed(p.seed);
+                  setAvatarColor(p.color);
+                }}
+                className={cn(
+                  "w-[44px] h-[44px] rounded-full overflow-hidden transition-all cursor-pointer bg-white border flex items-center justify-center border-[#DDD8D0]",
+                  isSelected && "border-2 border-[#6554D9] ring-[3px] ring-[#6554D9]/14 ring-offset-1"
+                )}
+                title={`Preset Avatar ${index + 1}`}
+              >
+                <img src={presetUrl} alt="" className="w-full h-full object-cover" />
+              </button>
+            );
+          })}
+          
+          {/* Toggle Customizer Button */}
+          <button
+            type="button"
+            onClick={() => {
+              setShowDoodleCustomizer(!showDoodleCustomizer);
+              if (isPresetSelected) {
+                setAvatarSeed(Math.random().toString(36).substring(7));
+              }
+            }}
+            className={cn(
+              "w-[44px] h-[44px] rounded-full transition-all cursor-pointer bg-[#EEEAFE] hover:bg-[#E2DBFC] border flex items-center justify-center text-[#6554D9] border-[#DDD8D0]",
+              (!isPresetSelected || showDoodleCustomizer) && "border-2 border-[#6554D9] ring-[3px] ring-[#6554D9]/14 ring-offset-1"
+            )}
+            aria-label="Customize your doodle"
+            aria-expanded={showDoodleCustomizer}
+          >
+            <Plus className="size-4" />
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
