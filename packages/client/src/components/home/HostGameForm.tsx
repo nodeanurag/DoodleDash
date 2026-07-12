@@ -244,6 +244,24 @@ export function HostGameForm({
           </div>
         )}
       </div>
+
+      {/* "Game settings" Accordion */}
+      <div className="w-full border border-[#DDD8D0] rounded-[11px] bg-white overflow-hidden transition-all duration-200">
+        <button
+          type="button"
+          onClick={() => setShowSettings(!showSettings)}
+          className="w-full px-3.5 py-3 text-xs font-bold text-[#222222] bg-[#FFFCF7] hover:bg-[#F9F5EE] flex items-center justify-between border-none cursor-pointer"
+          aria-expanded={showSettings}
+        >
+          <span>Game settings</span>
+          <ChevronDown className={cn("size-4 text-[#68666D] transition-transform duration-200", showSettings && "rotate-180")} />
+        </button>
+
+        {showSettings && (
+          <div className="p-3.5 grid grid-cols-2 gap-3 border-t border-[#DDD8D0] animate-rise">
+          </div>
+        )}
+      </div>
     </div>
   );
 }
