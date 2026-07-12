@@ -18,3 +18,11 @@ const AVATAR_STYLES = [
   { id: 'adventurer', name: 'Adventurers' },
   { id: 'fun-emoji', name: 'Emojis' }
 ];
+
+const PRESET_AVATARS = [
+  { style: 'croodles', seed: 'kitty', color: '#ef4444' },
+  { style: 'bottts', seed: 'cyber', color: '#3b82f6' },
+  { style: 'adventurer', seed: 'explorer', color: '#22c55e' },
+  { style: 'fun-emoji', seed: 'laugh', color: '#eab308' },
+  { style: 'croodles', seed: 'picasso', color: '#8b5cf6' },
+];
