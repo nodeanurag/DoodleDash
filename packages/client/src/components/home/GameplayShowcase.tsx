@@ -29,6 +29,14 @@ export function GameplayShowcase() {
             One secret word. One questionable drawing. A room full of confident wrong answers.
           </p>
         </div>
+
+        {/* Visual Showcase Block */}
+        <div className="w-full relative mt-16 md:mt-24 flex flex-col lg:flex-row items-center justify-center gap-12 lg:gap-6 min-h-[500px]">
+          
+          {/* Left / Overlay Oversized Steps */}
+          <div className="flex flex-col gap-6 lg:w-[32%] shrink-0 z-20">
+          </div>
+        </div>
       </div>
     </section>
   );
