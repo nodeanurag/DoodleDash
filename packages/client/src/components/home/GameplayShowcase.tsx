@@ -105,6 +105,51 @@ export function GameplayShowcase() {
                   12s
                 </div>
               </div>
+
+              {/* Tilted Game layout grid: Left, Center, Right columns */}
+              <div className="grid grid-cols-1 md:grid-cols-[165px_1fr_210px] gap-2.5 min-h-[260px] items-stretch">
+                
+                {/* 1. Players Mockup */}
+                <div className="bg-[#FFFCF7] border border-[#DDD8D0] rounded-xl p-2 flex flex-col gap-1.5 shadow-2xs">
+                  <span className="text-[9px] font-black text-[#68666D] uppercase px-0.5 tracking-wider mb-0.5">Players (3)</span>
+                  
+                  {/* KV (drawing, correct) */}
+                  <div className="flex items-center gap-1.5 bg-green-100 text-green-700 border border-green-400/30 rounded-lg p-1.5 shadow-3xs">
+                    <Avatar className="size-6 border border-black/10">
+                      <AvatarFallback className="bg-[#ef4444] text-white text-[10px] font-black">K</AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1 min-w-0 leading-none">
+                      <h5 className="text-[10px] font-black truncate">KV</h5>
+                      <span className="text-[8px] font-bold text-green-600">1240 pts</span>
+                    </div>
+                    <Badge className="bg-green-500 text-white text-[7px] font-black px-1 py-0.5 shrink-0 border-none">Correct</Badge>
+                  </div>
+
+                  {/* Alex */}
+                  <div className="flex items-center gap-1.5 bg-white text-[#222222] border border-[#DDD8D0] rounded-lg p-1.5 shadow-3xs">
+                    <Avatar className="size-6 border border-black/10">
+                      <AvatarFallback className="bg-[#3b82f6] text-white text-[10px] font-black">A</AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1 min-w-0 leading-none">
+                      <h5 className="text-[10px] font-black truncate">Alex</h5>
+                      <span className="text-[8px] font-bold text-neutral-400">980 pts</span>
+                    </div>
+                    <span className="text-[7px] font-black text-neutral-400 uppercase shrink-0">guesser</span>
+                  </div>
+
+                  {/* Sam */}
+                  <div className="flex items-center gap-1.5 bg-white text-[#222222] border border-[#DDD8D0] rounded-lg p-1.5 shadow-3xs">
+                    <Avatar className="size-6 border border-black/10">
+                      <AvatarFallback className="bg-[#22c55e] text-white text-[10px] font-black">S</AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1 min-w-0 leading-none">
+                      <h5 className="text-[10px] font-black truncate">Sam</h5>
+                      <span className="text-[8px] font-bold text-neutral-400">760 pts</span>
+                    </div>
+                    <span className="text-[7px] font-black text-neutral-400 uppercase shrink-0">guesser</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
