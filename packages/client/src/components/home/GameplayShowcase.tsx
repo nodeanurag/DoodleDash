@@ -35,6 +35,18 @@ export function GameplayShowcase() {
           
           {/* Left / Overlay Oversized Steps */}
           <div className="flex flex-col gap-6 lg:w-[32%] shrink-0 z-20">
+            {/* Step 1 */}
+            <div className="relative pl-14 pr-4 py-2 group">
+              <span className="absolute left-0 top-0 text-5xl md:text-[64px] font-black text-[#6554D9]/15 select-none leading-none tracking-tighter">
+                01
+              </span>
+              <h4 className="font-sans font-extrabold text-[#222222] text-base md:text-lg tracking-wide uppercase">
+                Draw something terrible
+              </h4>
+              <p className="text-xs text-[#68666D] font-bold mt-1">
+                You get 60 seconds to express your inner artist. Realism is optional. Speed is mandatory.
+              </p>
+            </div>
           </div>
         </div>
       </div>
