@@ -214,6 +214,45 @@ export function GameplayShowcase() {
                     </div>
                   </div>
                 </div>
+
+                {/* 3. Chat / Guesses Mockup */}
+                <div className="bg-[#FFFCF7] border border-[#DDD8D0] rounded-xl p-2 flex flex-col justify-between shadow-2xs">
+                  
+                  {/* Messages Feed */}
+                  <div className="flex flex-col gap-2 overflow-hidden flex-1 mb-2">
+                    <span className="text-[9px] font-black text-[#68666D] uppercase px-0.5 tracking-wider mb-0.5">Chat & Guesses</span>
+                    
+                    {/* Alex: horse? */}
+                    <div className="flex flex-col leading-none items-start">
+                      <span className="text-[8px] text-neutral-400 font-bold px-0.5">Alex</span>
+                      <div className="bg-white text-[#222222] border border-[#DDD8D0]/60 rounded-lg px-2 py-1 text-[10px] shadow-3xs mt-0.5">
+                        horse?
+                      </div>
+                    </div>
+
+                    {/* Sam: dog */}
+                    <div className="flex flex-col leading-none items-start">
+                      <span className="text-[8px] text-neutral-400 font-bold px-0.5">Sam</span>
+                      <div className="bg-white text-[#222222] border border-[#DDD8D0]/60 rounded-lg px-2 py-1 text-[10px] shadow-3xs mt-0.5">
+                        dog
+                      </div>
+                    </div>
+
+                    {/* Alex: bro that's a chair */}
+                    <div className="flex flex-col leading-none items-start">
+                      <span className="text-[8px] text-neutral-400 font-bold px-0.5">Alex</span>
+                      <div className="bg-white text-[#222222] border border-[#DDD8D0]/60 rounded-lg px-2 py-1 text-[10px] shadow-3xs mt-0.5">
+                        bro that's a chair
+                      </div>
+                    </div>
+
+                    {/* KV: GIRAFFE */}
+                    <div className="flex items-center gap-1.5 rounded-lg bg-green-500/10 border border-green-500/20 px-2 py-1 text-[10px] font-black text-green-600 my-0.5 shadow-3xs">
+                      <span className="size-3.5 bg-green-500 rounded-full flex items-center justify-center text-white text-[8px] shrink-0 font-black">✓</span>
+                      <span>KV guessed correct!</span>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
