@@ -155,6 +155,48 @@ export function GameplayShowcase() {
                   
                   {/*Questionable Giraffe Drawing Canvas Area */}
                   <div className="flex-1 w-full relative flex items-center justify-center p-4 bg-[#FFFCF7]">
+                    
+                    {/* SVG Giraffe Mockup - Intentionally terrible mouse-drawing */}
+                    <svg className="w-full h-full max-h-[160px] text-[#222222]" viewBox="0 0 200 200">
+                      {/* 1. Abandoned stroke */}
+                      <path d="M 52,125 Q 60,118 68,131" stroke="#222222" strokeWidth="3.5" strokeLinecap="round" fill="none" opacity="0.65" />
+
+                      {/* 2. Uneven fills (offset from outline) */}
+                      <path d="M 68,143 C 78,128 108,128 123,138 C 121,148 101,158 73,153 Z" fill="#F8C843" opacity="0.85" />
+                      <path d="M 112,143 L 138,55 L 123,51 L 98,135 Z" fill="#F8C843" opacity="0.85" />
+                      <ellipse cx="132" cy="51" rx="14" ry="9" fill="#F8C843" opacity="0.85" />
+
+                      {/* 3. Spots */}
+                      <circle cx="82" cy="144" r="5" fill="#D39E1B" />
+                      <circle cx="102" cy="146" r="6" fill="#D39E1B" />
+                      <circle cx="118" cy="115" r="5" fill="#D39E1B" />
+                      <circle cx="125" cy="85" r="4.5" fill="#D39E1B" />
+                      <circle cx="132" cy="65" r="3.5" fill="#D39E1B" />
+
+                      {/* 4. Shaky outlines */}
+                      <path d="M 65,145 Q 85,130 115,135" stroke="#222222" strokeWidth="4.5" strokeLinecap="round" fill="none" />
+                      <path d="M 65,145 C 62,158 90,162 118,154" stroke="#222222" strokeWidth="4.5" strokeLinecap="round" fill="none" />
+                      <path d="M 110,136 L 126,55" stroke="#222222" strokeWidth="4.5" strokeLinecap="round" fill="none" />
+                      <path d="M 120,140 L 138,52" stroke="#222222" strokeWidth="4.5" strokeLinecap="round" fill="none" />
+                      <path d="M 125,55 Q 120,42 135,42 Q 146,45 142,56 Q 138,62 125,55" stroke="#222222" strokeWidth="4.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+
+                      {/* 5. Uneven legs */}
+                      <path d="M 70,152 L 58,194" stroke="#222222" strokeWidth="4.5" strokeLinecap="round" fill="none" />
+                      <path d="M 82,155 L 80,185" stroke="#222222" strokeWidth="4" strokeLinecap="round" fill="none" />
+                      <path d="M 108,154 L 112,196" stroke="#222222" strokeWidth="4.5" strokeLinecap="round" fill="none" />
+                      <path d="M 118,151 L 126,182" stroke="#222222" strokeWidth="4" strokeLinecap="round" fill="none" />
+
+                      {/* 6. Tail */}
+                      <path d="M 64,146 C 54,152 46,145 42,152" stroke="#222222" strokeWidth="3.5" strokeLinecap="round" fill="none" />
+
+                      {/* 7. Clumsy Horns & Face */}
+                      <path d="M 130,42 L 132,32" stroke="#222222" strokeWidth="3" strokeLinecap="round" fill="none" />
+                      <circle cx="132" cy="30" r="2.5" fill="#D39E1B" stroke="#222222" strokeWidth="1.5" />
+                      <path d="M 139,44 L 148,35" stroke="#222222" strokeWidth="3" strokeLinecap="round" fill="none" />
+                      <circle cx="149" cy="33" r="2" fill="#D39E1B" stroke="#222222" strokeWidth="1.5" />
+                      <circle cx="132" cy="48" r="2.2" fill="#222222" />
+                      <path d="M 134,54 Q 139,52 136,50" stroke="#222222" strokeWidth="2.5" strokeLinecap="round" fill="none" />
+                    </svg>
                   </div>
                 </div>
               </div>
