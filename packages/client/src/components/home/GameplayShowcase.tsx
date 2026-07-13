@@ -198,6 +198,21 @@ export function GameplayShowcase() {
                       <path d="M 134,54 Q 139,52 136,50" stroke="#222222" strokeWidth="2.5" strokeLinecap="round" fill="none" />
                     </svg>
                   </div>
+
+                  {/* Canvas tools row preview */}
+                  <div className="bg-white border-t border-[#DDD8D0] p-1.5 flex gap-1.5 items-center justify-between shrink-0">
+                    <div className="flex gap-1">
+                      <span className="size-4.5 rounded-full bg-black border border-neutral-300" />
+                      <span className="size-4.5 rounded-full bg-[#ef4444]" />
+                      <span className="size-4.5 rounded-full bg-[#f97316]" />
+                      <span className="size-4.5 rounded-full bg-[#eab308]" />
+                      <span className="size-4.5 rounded-full bg-[#22c55e]" />
+                      <span className="size-4.5 rounded-full bg-[#3b82f6]" />
+                    </div>
+                    <div className="flex gap-1 text-[8px] font-black text-[#68666D] uppercase">
+                      <span>size: 8px</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
