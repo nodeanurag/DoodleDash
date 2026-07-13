@@ -252,6 +252,18 @@ export function GameplayShowcase() {
                       <span>KV guessed correct!</span>
                     </div>
                   </div>
+
+                  {/* Input Form */}
+                  <div className="flex gap-1 shrink-0 mt-auto">
+                    <Input 
+                      disabled 
+                      placeholder="Type your guess…" 
+                      className="h-7 text-[10px] rounded-lg bg-white border border-[#DDD8D0] px-2 py-0"
+                    />
+                    <Button disabled className="h-7 w-7 rounded-lg bg-[#6554D9] text-white p-0 shrink-0">
+                      →
+                    </Button>
+                  </div>
                 </div>
               </div>
             </div>
