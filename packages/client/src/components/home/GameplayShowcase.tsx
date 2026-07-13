@@ -74,6 +74,14 @@ export function GameplayShowcase() {
               </p>
             </div>
           </div>
+
+          {/* Right Showcase Screen Mockup (65-70% width) */}
+          <div className="w-full lg:w-[68%] max-w-[760px] relative z-10">
+            
+            {/* Tilted game container mockup */}
+            <div className="w-full bg-[#FFFCF7] border-2 border-[#252525] rounded-[24px] shadow-[8px_10px_0_rgba(37,37,37,0.08)] p-3 md:p-4 select-none rotate-[-2.5deg] relative transition-transform hover:rotate-0 duration-300">
+            </div>
+          </div>
         </div>
       </div>
     </section>
