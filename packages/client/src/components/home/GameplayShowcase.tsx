@@ -47,6 +47,32 @@ export function GameplayShowcase() {
                 You get 60 seconds to express your inner artist. Realism is optional. Speed is mandatory.
               </p>
             </div>
+
+            {/* Step 2 */}
+            <div className="relative pl-14 pr-4 py-2 group">
+              <span className="absolute left-0 top-0 text-5xl md:text-[64px] font-black text-[#6554D9]/15 select-none leading-none tracking-tighter">
+                02
+              </span>
+              <h4 className="font-sans font-extrabold text-[#222222] text-base md:text-lg tracking-wide uppercase">
+                Watch your friends panic
+              </h4>
+              <p className="text-xs text-[#68666D] font-bold mt-1">
+                Chat fills up with wild guesses as the timer ticks down. No, that is not a dog.
+              </p>
+            </div>
+
+            {/* Step 3 */}
+            <div className="relative pl-14 pr-4 py-2 group">
+              <span className="absolute left-0 top-0 text-5xl md:text-[64px] font-black text-[#6554D9]/15 select-none leading-none tracking-tighter">
+                03
+              </span>
+              <h4 className="font-sans font-extrabold text-[#222222] text-base md:text-lg tracking-wide uppercase">
+                Somehow win
+              </h4>
+              <p className="text-xs text-[#68666D] font-bold mt-1">
+                Score points for drawing, score points for guessing, and laugh at the final scoreboard.
+              </p>
+            </div>
           </div>
         </div>
       </div>
