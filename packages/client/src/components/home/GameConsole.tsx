@@ -82,6 +82,7 @@ export function GameConsole(props: GameConsoleProps) {
           "w-full md:block", 
           activeTab === 'host' ? "block" : "hidden"
         )}>
+          <HostGameForm {...props} />
         </div>
 
         {/* OR Divider (Desktop only, hidden on mobile) */}
@@ -100,6 +101,7 @@ export function GameConsole(props: GameConsoleProps) {
           "w-full md:block", 
           activeTab === 'join' ? "block" : "hidden"
         )}>
+          <JoinGameForm {...props} />
         </div>
       </div>
     </div>
