@@ -197,6 +197,15 @@ export function GameplayShowcase() {
                       <circle cx="132" cy="48" r="2.2" fill="#222222" />
                       <path d="M 134,54 Q 139,52 136,50" stroke="#222222" strokeWidth="2.5" strokeLinecap="round" fill="none" />
                     </svg>
+
+                    {/* "what is bro drawing?" annotation positioned near the giraffe */}
+                    <div className="absolute top-[8px] left-[8px] rotate-[-6deg] flex flex-col items-start gap-0.5 text-[#FF5C93] z-20 pointer-events-none hidden lg:flex">
+                      <span className="font-display font-bold text-[10px] whitespace-nowrap bg-white border border-[#DDD8D0] px-1.5 py-0.5 rounded shadow-3xs leading-none">
+                        what is bro drawing?
+                      </span>
+                      <ArrowDoodle className="w-8 h-auto scale-x-[-1] text-[#FF5C93] ml-2 mt-0.5" />
+                    </div>
+
                   </div>
 
                   {/* Canvas tools row preview */}
@@ -265,10 +274,40 @@ export function GameplayShowcase() {
                     </Button>
                   </div>
                 </div>
+
               </div>
             </div>
+
+            {/* Playful Hand-drawn annotations around the canvas wrapper */}
+
+            {/* 2. "12 sec left!" */}
+            <div className="absolute top-[-30px] right-[40px] rotate-[10deg] flex items-center gap-1 text-[#F8C843] z-20 pointer-events-none hidden md:flex">
+              <ArrowDoodle className="w-6 h-auto rotate-[-45deg] scale-y-[-1] text-[#F8C843]" />
+              <span className="font-display font-bold text-xs md:text-sm whitespace-nowrap mt-2">
+                12 sec left!
+              </span>
+            </div>
+
+            {/* 3. "GUESS FAST" */}
+            <div className="absolute bottom-[20px] right-[-68px] md:right-[-90px] rotate-[8deg] flex flex-col items-center gap-1.5 text-[#17B978] z-20 pointer-events-none hidden md:flex">
+              <ArrowDoodle className="w-8 h-auto rotate-[130deg] text-[#17B978]" />
+              <span className="font-display font-bold text-xs md:text-sm bg-white border-2 border-black px-2.5 py-0.5 rounded-md shadow-3xs">
+                GUESS FAST
+              </span>
+            </div>
+
+            {/* 4. "close enough... probably" */}
+            <div className="absolute bottom-[-44px] left-[150px] rotate-[-4deg] flex items-center gap-1.5 text-[#548CF6] z-20 pointer-events-none hidden md:flex">
+              <ArrowDoodle className="w-7 h-auto rotate-[60deg] text-[#548CF6]" />
+              <span className="font-display font-bold text-xs md:text-sm whitespace-nowrap">
+                close enough... probably
+              </span>
+            </div>
+
           </div>
+
         </div>
+
       </div>
     </section>
   );
