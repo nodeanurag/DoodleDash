@@ -149,6 +149,14 @@ export function GameplayShowcase() {
                     <span className="text-[7px] font-black text-neutral-400 uppercase shrink-0">guesser</span>
                   </div>
                 </div>
+
+                {/* 2. Drawing Canvas Mockup */}
+                <div className="bg-white border border-[#DDD8D0] rounded-xl flex flex-col justify-between overflow-hidden shadow-2xs relative">
+                  
+                  {/*Questionable Giraffe Drawing Canvas Area */}
+                  <div className="flex-1 w-full relative flex items-center justify-center p-4 bg-[#FFFCF7]">
+                  </div>
+                </div>
               </div>
             </div>
           </div>
