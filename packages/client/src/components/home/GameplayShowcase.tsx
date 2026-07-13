@@ -80,6 +80,31 @@ export function GameplayShowcase() {
             
             {/* Tilted game container mockup */}
             <div className="w-full bg-[#FFFCF7] border-2 border-[#252525] rounded-[24px] shadow-[8px_10px_0_rgba(37,37,37,0.08)] p-3 md:p-4 select-none rotate-[-2.5deg] relative transition-transform hover:rotate-0 duration-300">
+              
+              {/* Top HUD bar mockup */}
+              <div className="relative flex items-center justify-between px-3 py-2 border border-[#DDD8D0]/60 rounded-xl bg-white mb-3 shadow-[1px_2px_0_rgba(0,0,0,0.02)]">
+                
+                {/* Round Counter */}
+                <div className="flex flex-col">
+                  <div className="flex gap-0.5">
+                    <span className="size-2 rounded-full bg-[#6554D9]" />
+                    <span className="size-2 rounded-full bg-[#6554D9]" />
+                    <span className="size-2 rounded-full bg-[#6554D9]" />
+                    <span className="size-2 rounded-full bg-neutral-200" />
+                  </div>
+                  <span className="font-display text-[9px] font-bold text-[#68666D] mt-0.5">Round 3 of 4</span>
+                </div>
+
+                {/* Secret Word */}
+                <div className="font-display text-base md:text-xl font-bold tracking-[0.25em] text-[#222222]">
+                  G I R A F F E
+                </div>
+
+                {/* Timer Circle */}
+                <div className="size-9 rounded-full flex items-center justify-center bg-red-100 border-2 border-red-500 text-red-500 font-extrabold text-[13px] animate-pulse">
+                  12s
+                </div>
+              </div>
             </div>
           </div>
         </div>
