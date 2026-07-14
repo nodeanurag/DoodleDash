@@ -44,3 +44,44 @@ export const WordChooseSchema = z.object({
 export const ChatSendSchema = z.object({
   text: z.string().trim().min(1, 'Message cannot be empty').max(200, 'Message too long'),
 });
+
+export const PointSchema = z.object({
+  x: z.number().finite().min(0).max(1),
+  y: z.number().finite().min(0).max(1),
+});
+
+export const DrawStrokeSchema = z.object({
+  id: z.string().min(1),
+  tool: z.enum(['brush', 'eraser', 'fill']),
+  color: z.string().trim().regex(/^#[0-9a-fA-F]{6,8}$/, 'Invalid color format'),
+  width: z.number().finite().min(CANVAS.MIN_BRUSH).max(CANVAS.MAX_BRUSH),
+  points: z.array(PointSchema).min(1).max(256, 'Point count exceeds limit'),
+});
+
+export const DrawUndoSchema = z.object({
+  id: z.string().min(1),
+});
+
+export const PingSchema = z.object({
+  time: z.number().finite(),
+});
+
+/**
+ * Reusable helper for safe payload parsing.
+ * Returns { success: true, data: T } or { success: false, error: string }
+ */
+export function validateSocketPayload<T>(
+  schema: z.ZodSchema<T>,
+  payload: unknown
+): { success: true; data: T } | { success: false; error: string } {
+  const result = schema.safeParse(payload);
+  if (result.success) {
+    return { success: true, data: result.data };
+  } else {
+    const errorMsg = result.error.issues.map((err: z.ZodIssue) => `${err.path.join('.')}: ${err.message}`).join(', ');
+    if (process.env.NODE_ENV !== 'production') {
+      console.warn(`[Validation Failure] Payload:`, payload, `Error:`, errorMsg);
+    }
+    return { success: false, error: 'Invalid payload.' };
+  }
+}
