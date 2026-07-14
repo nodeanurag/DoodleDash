@@ -129,6 +129,31 @@ io.on('connection', (socket) => {
     ack?.(result);
   });
 
+  socket.on('word:choose', (payload) => {
+    if (!socketRateLimiter.allow(socket.id, 'word:choose')) return;
+
+    const parsed = validateSocketPayload(WordChooseSchema, payload);
+    if (!parsed.success) {
+      socket.emit('game:error', { message: 'Invalid word choice payload.' });
+      return;
+    }
+    const { word } = parsed.data;
+    const room = currentRoom();
+    if (!room) return;
+
+    // Permissions: room is in choosing phase and socket is drawer
+    const state = room.toState();
+    if (room.toState().phase !== 'choosing' || socket.id !== state.currentDrawerId) {
+      if (process.env.NODE_ENV !== 'production') {
+        console.warn(`[Unauthorized Action] Socket ${socket.id} attempted to choose word in Room ${room.code}`);
+      }
+      return;
+    }
+
+    room.chooseWord(socket.id, word);
+    room.markActivity();
+  });
+
   function currentRoom() {
     return socket.data.roomCode ? store.get(socket.data.roomCode) : undefined;
   }
