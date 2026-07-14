@@ -58,6 +58,49 @@ app.get('/health', (_req, res) => {
   });
 });
 
+io.on('connection', (socket) => {
+  socket.data.userId = null;
+  socket.data.playerName = '';
+  socket.data.roomCode = null;
+
+  io.emit('online-players:count', { count: io.engine.clientsCount });
+
+  function currentRoom() {
+    return socket.data.roomCode ? store.get(socket.data.roomCode) : undefined;
+  }
+
+  function joinRoom(code: string, name: string, avatarColor?: string, avatarUrl?: string, spectate = false) {
+    leaveRoom();
+    const room = store.get(code);
+    if (!room) {
+      socket.emit('game:error', { message: 'Room no longer exists.' });
+      return;
+    }
+    socket.join(code);
+    socket.data.roomCode = code;
+    socket.data.playerName = name;
+    if (spectate) room.addSpectator(socket.id, name);
+    else room.addPlayer(socket.id, name, avatarColor, avatarUrl);
+    room.broadcastState();
+    room.sendCatchup(socket.id); // replay in-progress drawing for late joiners
+  }
+
+  function leaveRoom() {
+    const code = socket.data.roomCode;
+    if (!code) return;
+    const room = store.get(code);
+    socket.leave(code);
+    socket.data.roomCode = null;
+    if (room) {
+      // A socket is either a player or a spectator; these are no-ops for the
+      // role it isn't.
+      room.removeSpectator(socket.id);
+      room.removePlayer(socket.id);
+      store.destroyIfEmpty(code);
+    }
+  }
+});
+
 httpServer.listen(PORT, () => {
   console.log(`🎨 DoodleDash server listening on http://localhost:${PORT}`);
   console.log(`   Health:  http://localhost:${PORT}/health`);
