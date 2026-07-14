@@ -154,6 +154,25 @@ io.on('connection', (socket) => {
     room.markActivity();
   });
 
+  socket.on('chat:send', (payload) => {
+    if (!socketRateLimiter.allow(socket.id, 'chat:send')) {
+      socket.emit('game:error', { message: 'Spam detected. Chat rate limit exceeded.' });
+      return;
+    }
+
+    const parsed = validateSocketPayload(ChatSendSchema, payload);
+    if (!parsed.success) {
+      socket.emit('game:error', { message: parsed.error });
+      return;
+    }
+    const { text } = parsed.data;
+    const room = currentRoom();
+    if (room) {
+      room.handleChat(socket.id, text);
+      room.markActivity();
+    }
+  });
+
   function currentRoom() {
     return socket.data.roomCode ? store.get(socket.data.roomCode) : undefined;
   }
