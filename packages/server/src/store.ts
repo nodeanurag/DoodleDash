@@ -45,3 +45,49 @@ export class InMemoryRoomStore implements RoomStore {
     return this.rooms.values();
   }
 }
+
+export class RoomManager {
+  private sweeperInterval: NodeJS.Timeout | null = null;
+
+  constructor(
+    private readonly io: IO,
+    private readonly store: RoomStore = new InMemoryRoomStore()
+  ) {
+    this.startSweeper();
+  }
+
+  private startSweeper(): void {
+    this.sweeperInterval = setInterval(() => {
+      this.cleanupExpired();
+    }, 30000);
+    this.sweeperInterval.unref();
+  }
+
+  cleanupExpired(): void {
+    const now = Date.now();
+    for (const room of this.store.values()) {
+      const lastActivity = room.getLastActivityTime();
+      if (room.isEmpty()) {
+        continue; // Handled by reconnect grace period
+      }
+
+      if (room.toState().phase === 'lobby') {
+        if (now - lastActivity > 10 * 60 * 1000) { // 10 minutes
+          if (process.env.NODE_ENV !== 'production') {
+            console.log(`[Lobby Expired] Room ${room.code} inactive for > 10m.`);
+          }
+          room.dispose();
+          this.store.delete(room.code);
+        }
+      } else {
+        if (now - lastActivity > 30 * 60 * 1000) { // 30 minutes
+          if (process.env.NODE_ENV !== 'production') {
+            console.log(`[Game Abandoned] Room ${room.code} inactive for > 30m.`);
+          }
+          room.dispose();
+          this.store.delete(room.code);
+        }
+      }
+    }
+  }
+}
