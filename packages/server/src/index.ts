@@ -173,6 +173,41 @@ io.on('connection', (socket) => {
     }
   });
 
+  socket.on('draw:stroke', (payload) => {
+    if (!socketRateLimiter.allow(socket.id, 'draw:stroke')) return;
+
+    const parsed = validateSocketPayload(DrawStrokeSchema, payload);
+    if (!parsed.success) {
+      socket.emit('game:error', { message: 'Invalid drawing stroke.' });
+      return;
+    }
+    const stroke = parsed.data;
+    const room = currentRoom();
+    if (!room) return;
+
+    // Permissions: room is in drawing phase and socket is current drawer
+    const state = room.toState();
+    if (state.phase !== 'drawing' || socket.id !== state.currentDrawerId) {
+      if (process.env.NODE_ENV !== 'production') {
+        console.warn(`[Unauthorized Action] Socket ${socket.id} attempted to draw stroke in Room ${room.code}`);
+      }
+      return;
+    }
+
+    // Point budget check
+    if (!pointBudget.allow(socket.id, stroke.points.length)) {
+      if (process.env.NODE_ENV !== 'production') {
+        console.warn(`[Point Budget Rejection] Socket ${socket.id} blocked by budget filter in Room ${room.code}`);
+      }
+      return;
+    }
+
+    const accepted = room.addStroke(socket.id, stroke);
+    if (accepted) {
+      room.markActivity();
+    }
+  });
+
   function currentRoom() {
     return socket.data.roomCode ? store.get(socket.data.roomCode) : undefined;
   }
