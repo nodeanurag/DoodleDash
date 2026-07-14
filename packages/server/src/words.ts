@@ -26,3 +26,13 @@ export const WORDS: readonly string[] = [
   'door', 'house', 'train', 'truck', 'bus', 'crown', 'bucket', 'brush',
   'pencil', 'book', 'clock', 'flower', 'tree', 'cloud',
 ];
+
+/** Fisher–Yates pick of `count` distinct words. */
+export function pickWords(count: number): string[] {
+  const pool = [...new Set(WORDS)];
+  for (let i = pool.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [pool[i], pool[j]] = [pool[j], pool[i]];
+  }
+  return pool.slice(0, count);
+}
