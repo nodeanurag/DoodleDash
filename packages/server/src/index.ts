@@ -101,6 +101,10 @@ io.on('connection', (socket) => {
     ack({ ok: true });
   });
 
+  socket.on('room:leave', () => {
+    leaveRoom();
+  });
+
   function currentRoom() {
     return socket.data.roomCode ? store.get(socket.data.roomCode) : undefined;
   }
