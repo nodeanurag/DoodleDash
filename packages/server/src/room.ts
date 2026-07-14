@@ -363,6 +363,63 @@ export class Room {
     }
   }
 
+  handleChat(playerId: string, rawText: string): void {
+    const text = rawText.slice(0, 120).trim();
+    if (!text) return;
+
+    // Spectators may chat but can never guess. Their messages still must not
+    // leak the secret word back to the room.
+    const spectator = this.spectators.get(playerId);
+    if (spectator) {
+      if (this.currentWord && normalize(text) === normalize(this.currentWord)) return;
+      this.broadcastChat({
+        id: nanoid(8),
+        playerId,
+        playerName: `${spectator.name} 👀`,
+        text,
+        type: 'chat',
+        timestamp: Date.now(),
+      });
+      return;
+    }
+
+    const player = this.players.get(playerId);
+    if (!player) return;
+
+    // The drawer (and players who already guessed) can't broadcast the answer.
+    const isGuessingPhase = this.phase === 'drawing';
+    const canGuess = isGuessingPhase && playerId !== this.currentDrawerId && !player.hasGuessed;
+
+    if (canGuess && this.currentWord && normalize(text) === normalize(this.currentWord)) {
+      this.acceptGuess(player);
+      return;
+    }
+
+    // Hide near-miss spoilers: if a guesser typed the exact word but isn't
+    // allowed to score (already guessed / is drawer) we still must not echo it.
+    if (this.currentWord && normalize(text) === normalize(this.currentWord)) {
+      // Quietly drop — never reveal the secret word in plain chat.
+      return;
+    }
+
+    this.broadcastChat({
+      id: nanoid(8),
+      playerId,
+      playerName: player.name,
+      text,
+      type: 'chat',
+      timestamp: Date.now(),
+    });
+  }
+
+  acceptGuess(player: Player): void {
+    // dummy method for compilation/completeness
+  }
+
+  broadcastChat(message: ChatMessage): void {
+    // dummy method for compilation/completeness
+  }
+
   broadcastState(): void {
     // dummy method for compilation/completeness
   }
