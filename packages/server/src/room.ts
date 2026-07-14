@@ -161,11 +161,83 @@ export class Room {
     if (this.players.size > 0) this.broadcastState();
   }
 
+  startGame(requesterId: string): { ok: true } | { error: string } {
+    if (requesterId !== this.hostId) return { error: 'Only the host can start the game.' };
+    if (this.phase !== 'lobby' && this.phase !== 'game-end')
+      return { error: 'Game already in progress.' };
+    if (this.connectedCount < GAME.MIN_PLAYERS)
+      return { error: `Need at least ${GAME.MIN_PLAYERS} players.` };
+
+    for (const p of this.players.values()) p.score = 0;
+    this.round = 0;
+    this.drawOrder = [...this.players.keys()];
+    this.drawIndex = -1;
+    this.system('The game is starting!');
+    this.nextTurn();
+    return { ok: true };
+  }
+
+  private nextTurn(): void {
+    this.clearTimers();
+    this.drawIndex += 1;
+
+    if (this.drawIndex >= this.drawOrder.length) {
+      this.round += 1;
+      this.drawIndex = 0;
+      if (this.round > this.settings.rounds) {
+        this.endGame();
+        return;
+      }
+    }
+    if (this.round === 0) this.round = 1;
+
+    let guard = 0;
+    while (guard < this.drawOrder.length) {
+      const candidate = this.drawOrder[this.drawIndex];
+      const player = candidate ? this.players.get(candidate) : undefined;
+      if (player && player.connected) break;
+      this.drawIndex += 1;
+      guard += 1;
+      if (this.drawIndex >= this.drawOrder.length) {
+        this.round += 1;
+        this.drawIndex = 0;
+        if (this.round > this.settings.rounds) {
+          this.endGame();
+          return;
+        }
+      }
+    }
+
+    const drawerId = this.drawOrder[this.drawIndex];
+    if (!drawerId || !this.players.get(drawerId)?.connected) {
+      this.endGame();
+      return;
+    }
+
+    this.beginChoosing(drawerId);
+  }
+
   broadcastState(): void {
     // dummy method for compilation/completeness
   }
 
   endTurn(): void {
+    // dummy method for compilation/completeness
+  }
+
+  system(text: string): void {
+    // dummy method for compilation/completeness
+  }
+
+  clearTimers(): void {
+    // dummy method for compilation/completeness
+  }
+
+  endGame(): void {
+    // dummy method for compilation/completeness
+  }
+
+  beginChoosing(drawerId: string): void {
     // dummy method for compilation/completeness
   }
 }
