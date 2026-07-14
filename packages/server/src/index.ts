@@ -65,6 +65,22 @@ io.on('connection', (socket) => {
 
   io.emit('online-players:count', { count: io.engine.clientsCount });
 
+  socket.on('room:create', (payload, ack) => {
+    if (!socketRateLimiter.allow(socket.id, 'room:create')) {
+      return ack({ error: 'Create room rate limit exceeded. Please wait.' });
+    }
+
+    const parsed = validateSocketPayload(RoomCreateSchema, payload);
+    if (!parsed.success) {
+      return ack({ error: parsed.error });
+    }
+    const { name, avatarColor, avatarUrl, settings } = parsed.data;
+    const room = store.create(settings);
+    joinRoom(room.code, name, avatarColor, avatarUrl);
+    room.markActivity();
+    ack({ code: room.code });
+  });
+
   function currentRoom() {
     return socket.data.roomCode ? store.get(socket.data.roomCode) : undefined;
   }
