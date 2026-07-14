@@ -59,4 +59,61 @@ export class Room {
     this.code = code;
     this.settings = settings;
   }
+
+  markActivity(): void {
+    this.lastActivityTime = Date.now();
+  }
+
+  getLastActivityTime(): number {
+    return this.lastActivityTime;
+  }
+
+  startEmptyGracePeriod(onExpire: () => void): void {
+    if (this.emptyGraceTimer) clearTimeout(this.emptyGraceTimer);
+    this.emptyGraceTimer = setTimeout(() => {
+      this.emptyGraceTimer = null;
+      onExpire();
+    }, 10000);
+  }
+
+  cancelEmptyGracePeriod(): void {
+    if (this.emptyGraceTimer) {
+      clearTimeout(this.emptyGraceTimer);
+      this.emptyGraceTimer = null;
+    }
+  }
+
+  get playerCount(): number {
+    return this.players.size;
+  }
+
+  get connectedCount(): number {
+    return [...this.players.values()].filter((p) => p.connected).length;
+  }
+
+  get spectatorCount(): number {
+    return this.spectators.size;
+  }
+
+  isEmpty(): boolean {
+    return this.players.size === 0 && this.spectators.size === 0;
+  }
+
+  addSpectator(socketId: string, name: string): void {
+    this.cancelEmptyGracePeriod();
+    this.spectators.set(socketId, { id: socketId, name: name.slice(0, 20) || 'Spectator' });
+    this.broadcastState();
+  }
+
+  removeSpectator(socketId: string): void {
+    if (this.spectators.delete(socketId)) this.broadcastState();
+  }
+
+  isSpectator(socketId: string): boolean {
+    return this.spectators.has(socketId);
+  }
+
+  broadcastState(): void {
+    // dummy method for compilation/completeness
+  }
 }
