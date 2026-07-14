@@ -21,3 +21,26 @@ export const RoomSettingsSchema = z.object({
   maxPlayers: z.number().int().min(GAME.MIN_PLAYERS).max(GAME.MAX_PLAYERS),
   isPrivate: z.boolean(),
 });
+
+export const RoomCreateSchema = z.object({
+  name: PlayerNameSchema,
+  avatarColor: z.string().trim().max(50).optional(),
+  avatarUrl: z.string().trim().max(500).optional(),
+  settings: RoomSettingsSchema.partial().optional(),
+});
+
+export const RoomJoinSchema = z.object({
+  name: PlayerNameSchema,
+  code: RoomCodeSchema,
+  avatarColor: z.string().trim().max(50).optional(),
+  avatarUrl: z.string().trim().max(500).optional(),
+  spectate: z.boolean().optional(),
+});
+
+export const WordChooseSchema = z.object({
+  word: z.string().trim().min(1),
+});
+
+export const ChatSendSchema = z.object({
+  text: z.string().trim().min(1, 'Message cannot be empty').max(200, 'Message too long'),
+});
