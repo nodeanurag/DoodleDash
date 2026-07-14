@@ -105,6 +105,30 @@ io.on('connection', (socket) => {
     leaveRoom();
   });
 
+  socket.on('game:start', (ack) => {
+    const room = currentRoom();
+    if (!room) return ack?.({ error: 'Not in a room.' });
+
+    // Permissions: Requester belongs to the room and is the host
+    const state = room.toState();
+    const player = state.players.find(p => p.id === socket.id);
+    if (!player || !player.isHost || state.hostId !== socket.id) {
+      if (process.env.NODE_ENV !== 'production') {
+        console.warn(`[Unauthorized Action] Socket ${socket.id} attempted to start game in Room ${room.code}`);
+      }
+      return ack?.({ error: 'Only the host can start the game.' });
+    }
+
+    const result = room.startGame(socket.id);
+    if ('ok' in result && result.ok) {
+      if (process.env.NODE_ENV !== 'production') {
+        console.log(`[Game Started] Room ${room.code} by host ${socket.id}`);
+      }
+      room.markActivity();
+    }
+    ack?.(result);
+  });
+
   function currentRoom() {
     return socket.data.roomCode ? store.get(socket.data.roomCode) : undefined;
   }
