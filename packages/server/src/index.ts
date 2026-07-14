@@ -249,6 +249,23 @@ io.on('connection', (socket) => {
     }
   });
 
+  socket.on('ping', (payload) => {
+    const parsed = validateSocketPayload(PingSchema, payload);
+    if (!parsed.success) return;
+    const { time } = parsed.data;
+    socket.emit('pong', { time });
+  });
+
+  socket.on('disconnect', () => {
+    socketRateLimiter.clear(socket.id);
+    pointBudget.clear(socket.id);
+
+    leaveRoom();
+    setTimeout(() => {
+      io.emit('online-players:count', { count: io.engine.clientsCount });
+    }, 0);
+  });
+
   function currentRoom() {
     return socket.data.roomCode ? store.get(socket.data.roomCode) : undefined;
   }
