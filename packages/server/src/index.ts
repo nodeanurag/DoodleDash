@@ -208,6 +208,47 @@ io.on('connection', (socket) => {
     }
   });
 
+  socket.on('draw:clear', () => {
+    if (!socketRateLimiter.allow(socket.id, 'draw:clear')) return;
+    const room = currentRoom();
+    if (!room) return;
+
+    // Permissions: room is in drawing phase and socket is current drawer
+    const state = room.toState();
+    if (state.phase !== 'drawing' || socket.id !== state.currentDrawerId) {
+      return;
+    }
+
+    const accepted = room.clearCanvas(socket.id);
+    if (accepted) {
+      room.markActivity();
+    }
+  });
+
+  socket.on('draw:undo', (payload) => {
+    if (!socketRateLimiter.allow(socket.id, 'draw:undo')) return;
+
+    const parsed = validateSocketPayload(DrawUndoSchema, payload);
+    if (!parsed.success) {
+      socket.emit('game:error', { message: 'Invalid undo payload.' });
+      return;
+    }
+    const { id } = parsed.data;
+    const room = currentRoom();
+    if (!room) return;
+
+    // Permissions: room is in drawing phase and socket is current drawer
+    const state = room.toState();
+    if (state.phase !== 'drawing' || socket.id !== state.currentDrawerId) {
+      return;
+    }
+
+    const accepted = room.undoStroke(socket.id, id);
+    if (accepted) {
+      room.markActivity();
+    }
+  });
+
   function currentRoom() {
     return socket.data.roomCode ? store.get(socket.data.roomCode) : undefined;
   }
