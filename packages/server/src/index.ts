@@ -8,6 +8,7 @@ import type {
   InterServerEvents,
   ServerToClientEvents,
   SocketData,
+  Player,
 } from '@doodle/shared';
 import { RoomManager } from './store.js';
 import {
@@ -111,7 +112,7 @@ io.on('connection', (socket) => {
 
     // Permissions: Requester belongs to the room and is the host
     const state = room.toState();
-    const player = state.players.find(p => p.id === socket.id);
+    const player = state.players.find((p: Player) => p.id === socket.id);
     if (!player || !player.isHost || state.hostId !== socket.id) {
       if (process.env.NODE_ENV !== 'production') {
         console.warn(`[Unauthorized Action] Socket ${socket.id} attempted to start game in Room ${room.code}`);
