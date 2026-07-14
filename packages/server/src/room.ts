@@ -321,6 +321,48 @@ export class Room {
     this.spectators.clear();
   }
 
+  addStroke(playerId: string, stroke: Stroke): boolean {
+    if (this.phase !== 'drawing' || playerId !== this.currentDrawerId) return false;
+    if (!this.players.has(playerId)) return false;
+    if (this.strokes.length >= 2000) {
+      return false;
+    }
+    this.strokes.push(stroke);
+    this.io.to(this.code).except(playerId).emit('draw:stroke', stroke);
+    return true;
+  }
+
+  clearCanvas(playerId: string): boolean {
+    if (this.phase !== 'drawing' || playerId !== this.currentDrawerId) return false;
+    if (!this.players.has(playerId)) return false;
+    this.strokes = [];
+    this.io.to(this.code).emit('draw:clear');
+    return true;
+  }
+
+  undoStroke(playerId: string, strokeId?: string): boolean {
+    if (this.phase !== 'drawing' || playerId !== this.currentDrawerId) return false;
+    if (!this.players.has(playerId)) return false;
+    let idToUndo = strokeId;
+    if (!idToUndo) {
+      const last = this.strokes[this.strokes.length - 1];
+      if (!last) return false;
+      idToUndo = last.id;
+    }
+    const exists = this.strokes.some((s) => s.id === idToUndo);
+    if (!exists) return false;
+
+    this.strokes = this.strokes.filter((s) => s.id !== idToUndo);
+    this.io.to(this.code).emit('draw:undo', { id: idToUndo });
+    return true;
+  }
+
+  sendCatchup(socketId: string): void {
+    if (this.strokes.length > 0) {
+      this.io.to(socketId).emit('room:catchup', this.strokes);
+    }
+  }
+
   broadcastState(): void {
     // dummy method for compilation/completeness
   }
