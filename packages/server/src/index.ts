@@ -41,6 +41,23 @@ const io = new Server<
 
 const store = new RoomManager(io);
 
+app.get('/health', (_req, res) => {
+  const mem = process.memoryUsage();
+  res.json({
+    status: 'ok',
+    uptime: process.uptime(),
+    rooms: store.count,
+    players: store.totalPlayerCount,
+    spectators: store.totalSpectatorCount,
+    memory: {
+      rss: mem.rss,
+      heapUsed: mem.heapUsed,
+      heapTotal: mem.heapTotal,
+    },
+    nodeVersion: process.version,
+  });
+});
+
 httpServer.listen(PORT, () => {
   console.log(`🎨 DoodleDash server listening on http://localhost:${PORT}`);
   console.log(`   Health:  http://localhost:${PORT}/health`);
