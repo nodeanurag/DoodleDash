@@ -12,3 +12,55 @@ export const RATE_LIMITS: Record<string, RateLimitRule> = {
   'draw:undo': { points: 20, durationMs: 10000 },
   'draw:clear': { points: 5, durationMs: 10000 },
 };
+
+class SocketRateLimiter {
+  // Maps socketId -> Map of eventName -> Array of timestamps
+  private records = new Map<string, Map<string, number[]>>();
+
+  /**
+   * Evaluates if a socket is within its rate limit for a specific event.
+   * Returns true if allowed, false if rate limited.
+   */
+  allow(socketId: string, eventName: string): boolean {
+    const rule = RATE_LIMITS[eventName];
+    if (!rule) return true; // Unregulated event
+
+    const now = Date.now();
+
+    let socketMap = this.records.get(socketId);
+    if (!socketMap) {
+      socketMap = new Map<string, number[]>();
+      this.records.set(socketId, socketMap);
+    }
+
+    let timestamps = socketMap.get(eventName);
+    if (!timestamps) {
+      timestamps = [];
+      socketMap.set(eventName, timestamps);
+    }
+
+    // Clean up timestamps outside window
+    const windowStart = now - rule.durationMs;
+    const activeTimestamps = timestamps.filter(t => t > windowStart);
+    socketMap.set(eventName, activeTimestamps);
+
+    if (activeTimestamps.length >= rule.points) {
+      if (process.env.NODE_ENV !== 'production') {
+        console.warn(`[Rate Limited] Socket ${socketId} triggered event ${eventName}`);
+      }
+      return false;
+    }
+
+    activeTimestamps.push(now);
+    return true;
+  }
+
+  /**
+   * Delete rate limiting registers when a socket disconnects.
+   */
+  clear(socketId: string): void {
+    this.records.delete(socketId);
+  }
+}
+
+export const socketRateLimiter = new SocketRateLimiter();
