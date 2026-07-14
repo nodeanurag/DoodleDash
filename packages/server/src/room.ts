@@ -113,7 +113,59 @@ export class Room {
     return this.spectators.has(socketId);
   }
 
+  addPlayer(socketId: string, name: string, customColor?: string, customUrl?: string): Player {
+    this.cancelEmptyGracePeriod();
+    const isHost = this.players.size === 0;
+    if (isHost) this.hostId = socketId;
+
+    const color = customColor || AVATAR_COLORS[this.players.size % AVATAR_COLORS.length];
+    const defaultUrl = `https://api.dicebear.com/10.x/croodles/svg?seed=${encodeURIComponent(name || socketId)}&backgroundColor=${color.replace('#', '')}`;
+
+    const player: Player = {
+      id: socketId,
+      userId: null,
+      name: name.slice(0, 20) || `Player ${this.players.size + 1}`,
+      avatarColor: color,
+      avatarUrl: customUrl || defaultUrl,
+      score: 0,
+      isHost,
+      isDrawing: false,
+      hasGuessed: false,
+      connected: true,
+    };
+    this.players.set(socketId, player);
+    return player;
+  }
+
+  removePlayer(socketId: string): void {
+    const player = this.players.get(socketId);
+    if (!player) return;
+    this.players.delete(socketId);
+    this.drawOrder = this.drawOrder.filter((id) => id !== socketId);
+
+    // Reassign host if needed.
+    if (this.hostId === socketId) {
+      const next = [...this.players.values()][0];
+      if (next) {
+        next.isHost = true;
+        this.hostId = next.id;
+      }
+    }
+
+    // If the drawer left mid-turn, end the turn immediately.
+    if (this.currentDrawerId === socketId && this.phase !== 'lobby') {
+      this.endTurn();
+      return;
+    }
+
+    if (this.players.size > 0) this.broadcastState();
+  }
+
   broadcastState(): void {
+    // dummy method for compilation/completeness
+  }
+
+  endTurn(): void {
     // dummy method for compilation/completeness
   }
 }
