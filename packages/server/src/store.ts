@@ -90,4 +90,32 @@ export class RoomManager {
       }
     }
   }
+
+  private generateCode(): string {
+    let code = '';
+    do {
+      code = '';
+      for (let i = 0; i < ROOM_CODE_LENGTH; i++) {
+        code += CODE_ALPHABET[Math.floor(Math.random() * CODE_ALPHABET.length)];
+      }
+    } while (this.store.has(code));
+    return code;
+  }
+
+  private resolveSettings(partial?: Partial<RoomSettings>): RoomSettings {
+    return {
+      rounds: clamp(partial?.rounds ?? GAME.DEFAULT_ROUNDS, 1, 10),
+      drawTimeSeconds: clamp(
+        partial?.drawTimeSeconds ?? GAME.DEFAULT_DRAW_TIME_SECONDS,
+        20,
+        180,
+      ),
+      maxPlayers: clamp(partial?.maxPlayers ?? GAME.MAX_PLAYERS, GAME.MIN_PLAYERS, GAME.MAX_PLAYERS),
+      isPrivate: partial?.isPrivate ?? true,
+    };
+  }
+}
+
+function clamp(n: number, min: number, max: number): number {
+  return Math.min(max, Math.max(min, Math.round(n)));
 }
