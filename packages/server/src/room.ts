@@ -256,11 +256,41 @@ export class Room {
     this.startCountdown(this.settings.drawTimeSeconds, () => this.endTurn());
   }
 
-  broadcastState(): void {
-    // dummy method for compilation/completeness
+  private endTurn(): void {
+    this.clearTimers();
+    if (this.phase === 'lobby' || this.phase === 'game-end') return;
+
+    this.phase = 'round-end';
+    const word = this.currentWord;
+    for (const p of this.players.values()) p.isDrawing = false;
+
+    if (word) {
+      this.io.to(this.code).emit('word:reveal', { word });
+      this.system(`The word was "${word}".`);
+    }
+    this.broadcastState();
+
+    this.startCountdown(GAME.ROUND_END_DELAY_SECONDS, () => this.nextTurn());
   }
 
-  endTurn(): void {
+  private endGame(): void {
+    if (process.env.NODE_ENV !== 'production') {
+      console.log(`[Game Ended] Room ${this.code} finished loop.`);
+    }
+    this.clearTimers();
+    this.phase = 'game-end';
+    this.currentDrawerId = null;
+    this.currentWord = null;
+    this.wordChoices = []; // Clear word choices
+    this.strokes = []; // Clear stroke history
+    for (const p of this.players.values()) p.isDrawing = false;
+
+    const winner = [...this.players.values()].sort((a, b) => b.score - a.score)[0];
+    if (winner) this.system(`Game over! ${winner.name} wins with ${winner.score} points.`);
+    this.broadcastState();
+  }
+
+  broadcastState(): void {
     // dummy method for compilation/completeness
   }
 
@@ -269,10 +299,6 @@ export class Room {
   }
 
   clearTimers(): void {
-    // dummy method for compilation/completeness
-  }
-
-  endGame(): void {
     // dummy method for compilation/completeness
   }
 
