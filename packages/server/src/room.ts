@@ -290,19 +290,42 @@ export class Room {
     this.broadcastState();
   }
 
+  private startCountdown(seconds: number, onDone: () => void): void {
+    this.timeRemaining = seconds;
+    this.io.to(this.code).emit('timer:tick', { timeRemaining: this.timeRemaining });
+
+    this.tickHandle = setInterval(() => {
+      this.timeRemaining -= 1;
+      this.io.to(this.code).emit('timer:tick', { timeRemaining: Math.max(0, this.timeRemaining) });
+      if (this.timeRemaining <= 0 && this.tickHandle) {
+        clearInterval(this.tickHandle);
+        this.tickHandle = null;
+      }
+    }, 1000);
+
+    this.phaseHandle = setTimeout(onDone, seconds * 1000);
+  }
+
+  private clearTimers(): void {
+    if (this.tickHandle) clearInterval(this.tickHandle);
+    if (this.phaseHandle) clearTimeout(this.phaseHandle);
+    this.tickHandle = null;
+    this.phaseHandle = null;
+  }
+
+  dispose(): void {
+    this.clearTimers();
+    this.wordChoices = [];
+    this.strokes = [];
+    this.players.clear();
+    this.spectators.clear();
+  }
+
   broadcastState(): void {
     // dummy method for compilation/completeness
   }
 
   system(text: string): void {
-    // dummy method for compilation/completeness
-  }
-
-  clearTimers(): void {
-    // dummy method for compilation/completeness
-  }
-
-  startCountdown(seconds: number, onDone: () => void): void {
     // dummy method for compilation/completeness
   }
 }
