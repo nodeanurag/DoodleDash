@@ -114,6 +114,60 @@ export class RoomManager {
       isPrivate: partial?.isPrivate ?? true,
     };
   }
+
+  create(partial?: Partial<RoomSettings>): Room {
+    const code = this.generateCode();
+    const room = new Room(this.io, code, this.resolveSettings(partial));
+    this.store.set(code, room);
+    return room;
+  }
+
+  get(code: string): Room | undefined {
+    return this.store.get(code);
+  }
+
+  destroyIfEmpty(code: string): void {
+    const room = this.store.get(code);
+    if (room && room.isEmpty()) {
+      room.startEmptyGracePeriod(() => {
+        if (room.isEmpty()) {
+          if (process.env.NODE_ENV !== 'production') {
+            console.log(`[Disposed Empty Room] Room ${room.code} empty grace period expired.`);
+          }
+          room.dispose();
+          this.store.delete(code);
+        }
+      });
+    }
+  }
+
+  get count(): number {
+    let total = 0;
+    for (const _ of this.store.values()) {
+      total++;
+    }
+    return total;
+  }
+
+  get totalPlayerCount(): number {
+    let total = 0;
+    for (const room of this.store.values()) {
+      total += room.playerCount;
+    }
+    return total;
+  }
+
+  get totalSpectatorCount(): number {
+    let total = 0;
+    for (const room of this.store.values()) {
+      total += room.spectatorCount;
+    }
+    return total;
+  }
+
+  getStore(): RoomStore {
+    return this.store;
+  }
 }
 
 function clamp(n: number, min: number, max: number): number {
