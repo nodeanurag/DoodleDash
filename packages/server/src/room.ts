@@ -412,19 +412,81 @@ export class Room {
     });
   }
 
-  acceptGuess(player: Player): void {
-    // dummy method for compilation/completeness
+  private acceptGuess(player: Player): void {
+    player.hasGuessed = true;
+    this.correctThisTurn.add(player.id);
+
+    // Score: guesser points scale with remaining time; drawer earns a slice
+    // for each correct guesser.
+    const ratio = Math.max(0, this.timeRemaining) / this.settings.drawTimeSeconds;
+    const guesserPoints = 50 + Math.round(ratio * 250);
+    player.score += guesserPoints;
+
+    const drawer = this.currentDrawerId ? this.players.get(this.currentDrawerId) : undefined;
+    if (drawer) drawer.score += 25;
+
+    this.broadcastChat({
+      id: nanoid(8),
+      playerId: player.id,
+      playerName: player.name,
+      text: `${player.name} guessed the word! (+${guesserPoints})`,
+      type: 'correct',
+      timestamp: Date.now(),
+    });
+    this.broadcastState();
+
+    // End the turn early once every active guesser has it.
+    const guessers = [...this.players.values()].filter(
+      (p) => p.connected && p.id !== this.currentDrawerId,
+    );
+    if (guessers.length > 0 && guessers.every((p) => p.hasGuessed)) {
+      this.endTurn();
+    }
   }
 
-  broadcastChat(message: ChatMessage): void {
-    // dummy method for compilation/completeness
+  private maskWord(word: string): string {
+    return word
+      .split('')
+      .map((ch) => (ch === ' ' ? '  ' : ch === '-' ? '-' : '_'))
+      .join(' ');
+  }
+
+  toState(): RoomState {
+    let wordHint: string | null = null;
+    if (this.currentWord) {
+      wordHint = this.phase === 'round-end' ? this.currentWord : this.maskWord(this.currentWord);
+    }
+    return {
+      code: this.code,
+      phase: this.phase,
+      round: this.round,
+      totalRounds: this.settings.rounds,
+      players: [...this.players.values()],
+      hostId: this.hostId,
+      currentDrawerId: this.currentDrawerId,
+      wordHint,
+      timeRemaining: Math.max(0, this.timeRemaining),
+      settings: this.settings,
+      spectatorCount: this.spectators.size,
+    };
   }
 
   broadcastState(): void {
-    // dummy method for compilation/completeness
+    this.io.to(this.code).emit('room:state', this.toState());
   }
 
-  system(text: string): void {
-    // dummy method for compilation/completeness
+  private broadcastChat(message: ChatMessage): void {
+    this.io.to(this.code).emit('chat:message', message);
+  }
+
+  private system(text: string): void {
+    this.broadcastChat({
+      id: nanoid(8),
+      playerId: 'system',
+      playerName: 'System',
+      text,
+      type: 'system',
+      timestamp: Date.now(),
+    });
   }
 }
