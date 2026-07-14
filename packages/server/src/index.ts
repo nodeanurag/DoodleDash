@@ -81,6 +81,26 @@ io.on('connection', (socket) => {
     ack({ code: room.code });
   });
 
+  socket.on('room:join', (payload, ack) => {
+    if (!socketRateLimiter.allow(socket.id, 'room:join')) {
+      return ack({ error: 'Join room rate limit exceeded. Please wait.' });
+    }
+
+    const parsed = validateSocketPayload(RoomJoinSchema, payload);
+    if (!parsed.success) {
+      return ack({ error: parsed.error });
+    }
+    const { name, code, avatarColor, avatarUrl, spectate } = parsed.data;
+    const room = store.get(code);
+    if (!room) return ack({ error: 'Room not found.' });
+    // Spectators are not bound by the player cap — only players are.
+    if (!spectate && room.playerCount >= room.toState().settings.maxPlayers)
+      return ack({ error: 'Room is full. Try joining as a spectator.' });
+    joinRoom(room.code, name, avatarColor, avatarUrl, Boolean(spectate));
+    room.markActivity();
+    ack({ ok: true });
+  });
+
   function currentRoom() {
     return socket.data.roomCode ? store.get(socket.data.roomCode) : undefined;
   }
