@@ -217,6 +217,45 @@ export class Room {
     this.beginChoosing(drawerId);
   }
 
+  private beginChoosing(drawerId: string): void {
+    this.phase = 'choosing';
+    this.currentDrawerId = drawerId;
+    this.currentWord = null;
+    this.strokes = [];
+    this.correctThisTurn.clear();
+    this.wordChoices = pickWords(GAME.WORD_CHOICE_COUNT);
+
+    for (const p of this.players.values()) {
+      p.isDrawing = p.id === drawerId;
+      p.hasGuessed = false;
+    }
+
+    this.io.to(this.code).emit('draw:clear');
+    this.broadcastState();
+
+    this.io.to(drawerId).emit('word:choices', { words: this.wordChoices });
+    this.system(`${this.players.get(drawerId)?.name ?? 'Someone'} is choosing a word.`);
+
+    this.startCountdown(GAME.WORD_CHOICE_TIME_SECONDS, () => {
+      this.chooseWord(drawerId, this.wordChoices[0]);
+    });
+  }
+
+  chooseWord(drawerId: string, word: string): void {
+    if (this.phase !== 'choosing' || drawerId !== this.currentDrawerId) return;
+    if (!this.wordChoices.includes(word)) return;
+    this.clearTimers();
+
+    this.currentWord = word;
+    this.wordChoices = [];
+    this.phase = 'drawing';
+    this.broadcastState();
+
+    this.io.to(drawerId).emit('word:reveal', { word });
+
+    this.startCountdown(this.settings.drawTimeSeconds, () => this.endTurn());
+  }
+
   broadcastState(): void {
     // dummy method for compilation/completeness
   }
@@ -237,7 +276,7 @@ export class Room {
     // dummy method for compilation/completeness
   }
 
-  beginChoosing(drawerId: string): void {
+  startCountdown(seconds: number, onDone: () => void): void {
     // dummy method for compilation/completeness
   }
 }
