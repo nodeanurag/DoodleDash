@@ -21,3 +21,27 @@ export interface RoomStore {
   has(code: string): boolean;
   values(): IterableIterator<Room>;
 }
+
+export class InMemoryRoomStore implements RoomStore {
+  private rooms = new Map<string, Room>();
+
+  get(code: string): Room | undefined {
+    return this.rooms.get(code.toUpperCase());
+  }
+
+  set(code: string, room: Room): void {
+    this.rooms.set(code.toUpperCase(), room);
+  }
+
+  delete(code: string): void {
+    this.rooms.delete(code.toUpperCase());
+  }
+
+  has(code: string): boolean {
+    return this.rooms.has(code.toUpperCase());
+  }
+
+  values(): IterableIterator<Room> {
+    return this.rooms.values();
+  }
+}
