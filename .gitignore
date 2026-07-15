@@ -22,6 +22,7 @@ npm-debug.log*
 # Editor / OS
 .DS_Store
 .idea/
+.vscode/
 *.swp
 Thumbs.db
 
