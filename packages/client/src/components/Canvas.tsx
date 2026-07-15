@@ -105,8 +105,83 @@ export function Canvas({ drawable, tool, color, width }: CanvasProps) {
   const activeId = useRef<string>('');
   const activePointerId = useRef<number | null>(null);
 
-  // Placeholder for worker Ref
-  const workerRef = useRef<any>(null);
+  const workerRef = useRef<Worker | null>(null);
+  const activeJobIdRef = useRef<number>(0);
+
+  useEffect(() => {
+    const worker = new Worker(
+      new URL('../workers/floodFill.worker.ts', import.meta.url),
+      { type: 'module' }
+    );
+    workerRef.current = worker;
+
+    worker.onmessage = (e: MessageEvent) => {
+      const { success, imgDataArray, jobId } = e.data;
+      if (!success || !canvasRef.current) return;
+
+      if (jobId !== activeJobIdRef.current) return;
+
+      const ctx = canvasRef.current.getContext('2d');
+      if (!ctx) return;
+
+      const w = canvasRef.current.width;
+      const h = canvasRef.current.height;
+      const u8Array = new Uint8ClampedArray(imgDataArray);
+      const imgData = new ImageData(u8Array, w, h);
+      ctx.putImageData(imgData, 0, 0);
+    };
+
+    return () => {
+      worker.terminate();
+      workerRef.current = null;
+    };
+  }, []);
+
+  const performFloodFill = useCallback((ctx: CanvasRenderingContext2D, startX: number, startY: number, fillColorStr: string) => {
+    const canvas = ctx.canvas;
+    const w = canvas.width;
+    const h = canvas.height;
+
+    const temp = document.createElement('div');
+    temp.style.color = fillColorStr;
+    document.body.appendChild(temp);
+    const compColor = window.getComputedStyle(temp).color;
+    document.body.removeChild(temp);
+
+    const parts = compColor.match(/\d+/g);
+    if (!parts) return;
+    const fillR = parseInt(parts[0]);
+    const fillG = parseInt(parts[1]);
+    const fillB = parseInt(parts[2]);
+    const fillA = parts[3] ? Math.round(parseFloat(parts[3]) * 255) : 255;
+
+    const imgData = ctx.getImageData(0, 0, w, h);
+
+    activeJobIdRef.current += 1;
+    const jobId = activeJobIdRef.current;
+
+    const targetX = Math.round(startX);
+    const targetY = Math.round(startY);
+
+    if (workerRef.current) {
+      const buffer = imgData.data.buffer;
+      workerRef.current.postMessage(
+        {
+          imgDataArray: buffer,
+          w,
+          h,
+          targetX,
+          targetY,
+          fillR,
+          fillG,
+          fillB,
+          fillA,
+          jobId,
+        },
+        [buffer]
+      );
+    }
+  }, []);
 
   const paintStroke = useCallback((stroke: Stroke) => {
     const canvas = canvasRef.current;
@@ -114,7 +189,10 @@ export function Canvas({ drawable, tool, color, width }: CanvasProps) {
     if (!canvas || !ctx) return;
 
     if (stroke.tool === 'fill') {
-      // Placeholder for flood fill in next commit
+      const p = stroke.points[0];
+      if (p) {
+        performFloodFill(ctx, p.x * canvas.width, p.y * canvas.height, stroke.color);
+      }
       return;
     }
 
@@ -140,7 +218,7 @@ export function Canvas({ drawable, tool, color, width }: CanvasProps) {
       ctx.lineTo(pts[i].x * canvas.width, pts[i].y * canvas.height);
     }
     ctx.stroke();
-  }, []);
+  }, [performFloodFill]);
 
   const repaintAll = useCallback(() => {
     const canvas = canvasRef.current;
@@ -272,7 +350,17 @@ export function Canvas({ drawable, tool, color, width }: CanvasProps) {
       currentDragPoint.current = p;
 
       if (tool === 'fill') {
-        // Placeholder for fill in next commit
+        const fillStroke: Stroke = {
+          id: activeId.current,
+          tool: 'fill',
+          color,
+          width: 0,
+          points: [p],
+        };
+        history.current.push(fillStroke);
+        paintStroke(fillStroke);
+        sendStroke(fillStroke);
+        drawing.current = false;
       } else if (tool === 'brush' || tool === 'eraser') {
         const dot: Stroke = { id: activeId.current, tool: tool === 'eraser' ? 'eraser' : 'brush', color, width, points: [p] };
         history.current.push(dot);
