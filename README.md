@@ -80,3 +80,7 @@ one, and join with the room code in the other. You need **2+ players** to start.
   coordinates, so drawings render identically on any screen size.
 - **State-clean transitions:** the server emits an explicit `draw:clear` between
   turns to wipe every canvas simultaneously.
+- **Rate limiting & socket throttling:**
+  - Sliding-window rate limiters prevent connection spamming (e.g., maximum of 2 room creations and 5 joins per minute, and 60 chat messages per minute).
+  - A stroke point budget throttle restricts drawing commands to a sliding point budget per connection to prevent server canvas flooding and coordinate overflow.
+
