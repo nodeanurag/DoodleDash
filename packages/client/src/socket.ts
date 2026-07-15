@@ -41,7 +41,7 @@ export function connectSocket() {
     return;
   }
 
-  let fallbackTimeout: NodeJS.Timeout;
+  let fallbackTimeout: number;
 
   const triggerFallback = () => {
     if (socket.connected) return;
