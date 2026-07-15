@@ -10,7 +10,7 @@ import {
 } from 'react';
 import { toast } from 'sonner';
 import type { ChatMessage, RoomSettings, RoomState, Stroke } from '@doodle/shared';
-import { socket } from './socket';
+import { socket, connectSocket } from './socket';
 
 export type Screen = 'home' | 'game';
 
@@ -70,7 +70,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
   const pendingName = useRef<string>('');
 
   useEffect(() => {
-    socket.connect();
+    connectSocket();
 
     const onConnect = () => {
       setConnected(true);
