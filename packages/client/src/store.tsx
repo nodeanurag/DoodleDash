@@ -18,11 +18,15 @@ export interface GameContextValue {
   connected: boolean;
   screen: Screen;
   myId: string;
+  /** True when this client joined as a watch-only spectator. */
   spectating: boolean;
   room: RoomState | null;
   messages: ChatMessage[];
+  /** Words offered to us when it's our turn to draw (drawer only). */
   wordChoices: string[] | null;
+  /** The secret word, known to us only when we're the drawer or at round end. */
   revealedWord: string | null;
+  /** Strokes to replay onto a freshly mounted canvas (catch-up / clear). */
   incomingStrokes: Stroke[];
   strokeVersion: number;
   clearSignal: number;
@@ -91,7 +95,24 @@ export function GameProvider({ children }: { children: ReactNode }) {
       setRevealedWord(word);
       setWordChoices(null);
     };
-
+    const onStroke = (stroke: Stroke) => {
+      setIncomingStrokes([stroke]);
+      setStrokeVersion((v) => v + 1);
+    };
+    const onCatchup = (strokes: Stroke[]) => {
+      setIncomingStrokes(strokes);
+      setStrokeVersion((v) => v + 1);
+    };
+    const onClear = () => {
+      setClearSignal((v) => v + 1);
+      setMyStrokes([]);
+      setUndoneStrokes([]);
+    };
+    const onUndo = ({ id }: { id: string }) => {
+      setUndoSignal({ id });
+      setMyStrokes((prev) => prev.filter((s) => s.id !== id));
+      setUndoneStrokes((prev) => prev.filter((s) => s.id !== id));
+    };
     const onGlobalPlayers = ({ count }: { count: number }) => setGlobalPlayerCount(count);
     const onError = ({ message }: { message: string }) => toast.error(message);
 
@@ -102,6 +123,10 @@ export function GameProvider({ children }: { children: ReactNode }) {
     socket.on('timer:tick', onTick);
     socket.on('word:choices', onChoices);
     socket.on('word:reveal', onReveal);
+    socket.on('draw:stroke', onStroke);
+    socket.on('room:catchup', onCatchup);
+    socket.on('draw:clear', onClear);
+    socket.on('draw:undo', onUndo);
     socket.on('online-players:count', onGlobalPlayers);
     socket.on('game:error', onError);
 
@@ -113,11 +138,22 @@ export function GameProvider({ children }: { children: ReactNode }) {
       socket.off('timer:tick', onTick);
       socket.off('word:choices', onChoices);
       socket.off('word:reveal', onReveal);
+      socket.off('draw:stroke', onStroke);
+      socket.off('room:catchup', onCatchup);
+      socket.off('draw:clear', onClear);
+      socket.off('draw:undo', onUndo);
       socket.off('online-players:count', onGlobalPlayers);
       socket.off('game:error', onError);
       socket.disconnect();
     };
   }, []);
+
+  useEffect(() => {
+    if (room?.phase === 'choosing' && room.currentDrawerId !== myId) {
+      setRevealedWord(null);
+      setWordChoices(null);
+    }
+  }, [room?.phase, room?.currentDrawerId, myId]);
 
   const resetToHome = useCallback(() => {
     setScreen('home');
@@ -165,12 +201,44 @@ export function GameProvider({ children }: { children: ReactNode }) {
 
   const sendChat = useCallback((text: string) => socket.emit('chat:send', { text }), []);
 
-  // Placeholders for canvas actions to be added in next commit
-  const sendStroke = useCallback((stroke: Stroke) => {}, []);
-  const clearCanvas = useCallback(() => {}, []);
-  const undoStroke = useCallback((id: string) => {}, []);
-  const undo = useCallback(() => {}, []);
-  const redo = useCallback(() => {}, []);
+  const sendStroke = useCallback((stroke: Stroke) => {
+    socket.emit('draw:stroke', stroke);
+    setMyStrokes((prev) => {
+      const last = prev[prev.length - 1];
+      if (last && last.id === stroke.id) {
+        return [...prev.slice(0, -1), stroke];
+      } else {
+        setUndoneStrokes([]);
+        return [...prev, stroke];
+      }
+    });
+  }, []);
+
+  const clearCanvas = useCallback(() => {
+    socket.emit('draw:clear');
+    setMyStrokes([]);
+    setUndoneStrokes([]);
+  }, []);
+
+  const undoStroke = useCallback((id: string) => {
+    socket.emit('draw:undo', { id });
+  }, []);
+
+  const undo = useCallback(() => {
+    if (myStrokes.length === 0) return;
+    const popped = myStrokes[myStrokes.length - 1];
+    setMyStrokes((prev) => prev.slice(0, -1));
+    setUndoneStrokes((prev) => [...prev, popped]);
+    socket.emit('draw:undo', { id: popped.id });
+  }, [myStrokes]);
+
+  const redo = useCallback(() => {
+    if (undoneStrokes.length === 0) return;
+    const popped = undoneStrokes[undoneStrokes.length - 1];
+    setUndoneStrokes((prev) => prev.slice(0, -1));
+    setMyStrokes((prev) => [...prev, popped]);
+    socket.emit('draw:stroke', popped);
+  }, [undoneStrokes]);
 
   const value = useMemo<GameContextValue>(
     () => ({
@@ -196,8 +264,8 @@ export function GameProvider({ children }: { children: ReactNode }) {
       sendStroke,
       clearCanvas,
       undoStroke,
-      canUndo: false,
-      canRedo: false,
+      canUndo: myStrokes.length > 0,
+      canRedo: undoneStrokes.length > 0,
       undo,
       redo,
     }),
@@ -224,6 +292,8 @@ export function GameProvider({ children }: { children: ReactNode }) {
       sendStroke,
       clearCanvas,
       undoStroke,
+      myStrokes,
+      undoneStrokes,
       undo,
       redo,
     ],
