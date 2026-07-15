@@ -36,5 +36,3 @@ packages/server/prisma/*.db
 # Vite
 .vite/
 
-# Docs
-docs/
